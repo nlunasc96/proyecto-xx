@@ -11,12 +11,17 @@ jobs:
           # 1. Levanta el navegador virtual
           docker run -d -p 6080:80 --security-opt seccomp=unconfined dorowu/ubuntu-desktop-lxde-vnc
           
-          # 2. Descarga e instala la herramienta oficial de Microsoft
-          curl -sL https://aka.ms/DevTunnelCliInstall | bash
+          echo "=========================================================="
+          echo "DESCARGANDO COMPONENTE DE MICROSOFT..."
+          echo "=========================================================="
+          
+          # 2. Descarga directa del binario portátil de devtunnel para Linux x64
+          curl -sL https://aka.ms/devtunnel-linux-x64-release -o devtunnel
+          chmod +x devtunnel
           
           echo "=========================================================="
           echo "GENERANDO ENLACE INDESTRUCTIBLE..."
           echo "=========================================================="
           
-          # 3. Arrancar el túnel usando la ruta global directa de instalación
-          /usr/local/bin/devtunnel host create --allow-anonymous -p 6080
+          # 3. Arrancar el túnel portátil local
+          ./devtunnel host create --allow-anonymous -p 6080
