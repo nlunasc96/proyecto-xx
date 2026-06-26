@@ -6,22 +6,22 @@ jobs:
   run-browser:
     runs-on: ubuntu-latest
     steps:
-      - name: Preparar Entorno y Chrome
+      - name: Preparar Entorno con Memoria Expandida
         run: |
-          # 1. Levanta el escritorio virtual
-          docker run -d -p 6080:80 --security-opt seccomp=unconfined dorowu/ubuntu-desktop-lxde-vnc
+          # 1. Levanta el escritorio virtual CON 2GB DE MEMORIA COMPARTIDA (Evita el Aw Snap)
+          docker run -d -p 6080:80 --shm-size=2gb --security-opt seccomp=unconfined dorowu/ubuntu-desktop-lxde-vnc
           
           echo "=========================================================="
-          echo "INSTALANDO GOOGLE CHROME ACTUALIZADO..."
+          echo "INSTALANDO GOOGLE CHROME..."
           echo "=========================================================="
           
-          # 2. Descarga e instala Chrome de forma directa forzada
+          # 2. Instala Chrome y lo configura como root
           docker exec $(docker ps -q) sh -c "
             apt-get update -y || true &&
             apt-get install -y wget gdebi-core &&
             wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb &&
             gdebi --n google-chrome-stable_current_amd64.deb &&
-            sed -i 's/exec -a \"\$0\" \"\$HERE\/chrome\" \"\$@\"/exec -a \"\$0\" \"\$HERE\/chrome\" \"\$@\" --no-sandbox --user-data-dir/g' /opt/google/chrome/google-chrome
+            sed -i 's/exec -a \"\$0\" \"\$HERE\/chrome\" \"\$@\"/exec -a \"\$0\" \"\$HERE\/chrome\" \"\$@\" --no-sandbox --user-data-dir --disable-gpu/g' /opt/google/chrome/google-chrome
           "
           
           echo "=========================================================="
