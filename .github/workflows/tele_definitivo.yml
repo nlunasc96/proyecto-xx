@@ -1,4 +1,4 @@
-name: Navegador Definitivo Microsoft
+name: Navegador Libre Pinggy
 on:
   workflow_dispatch:
 
@@ -12,16 +12,8 @@ jobs:
           docker run -d -p 6080:80 --security-opt seccomp=unconfined dorowu/ubuntu-desktop-lxde-vnc
           
           echo "=========================================================="
-          echo "DESCARGANDO COMPONENTE DE MICROSOFT..."
+          echo "GENERANDO ENLACE SEGURO CON PINGGY..."
           echo "=========================================================="
           
-          # 2. Descarga directa del binario portátil de devtunnel para Linux x64
-          curl -sL https://aka.ms/devtunnel-linux-x64-release -o devtunnel
-          chmod +x devtunnel
-          
-          echo "=========================================================="
-          echo "GENERANDO ENLACE INDESTRUCTIBLE..."
-          echo "=========================================================="
-          
-          # 3. Arrancar el túnel portátil local
-          ./devtunnel host create --allow-anonymous -p 6080
+          # 2. Crea un túnel SSH retransmitiendo el navegador
+          ssh -p 443 -R0:localhost:6080 -o StrictHostKeyChecking=no a.pinggy.io
