@@ -1,0 +1,15 @@
+name: Conectar Navegador Libre
+on:
+  workflow_dispatch:
+
+jobs:
+  run-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Iniciar Entorno Web
+        run: |
+          docker run -d -p 6080:80 --security-opt seccomp=unconfined dorowu/ubuntu-desktop-lxde-vnc
+          echo "=========================================================="
+          echo "GENERANDO ENLACE DE CONEXIÓN..."
+          echo "=========================================================="
+          npx localtunnel --port 6080
