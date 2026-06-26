@@ -1,4 +1,4 @@
-name: Navegador Chrome Pro (WhatsApp & Spotify)
+name: Navegador Chrome Pro (Modo Chile)
 on:
   workflow_dispatch:
 
@@ -6,26 +6,28 @@ jobs:
   run-browser:
     runs-on: ubuntu-latest
     steps:
-      - name: Preparar Entorno con Memoria Expandida
+      - name: Preparar Entorno Chile Todo Incluido
         run: |
-          # 1. Levanta el escritorio virtual CON 2GB DE MEMORIA COMPARTIDA (Evita el Aw Snap)
+          # 1. Levanta el escritorio virtual con memoria expandida
           docker run -d -p 6080:80 --shm-size=2gb --security-opt seccomp=unconfined dorowu/ubuntu-desktop-lxde-vnc
           
           echo "=========================================================="
-          echo "INSTALANDO GOOGLE CHROME..."
+          echo "INSTALANDO GOOGLE CHROME ACTUALIZADO..."
           echo "=========================================================="
           
-          # 2. Instala Chrome y lo configura como root
+          # 2. Instala Chrome, lo arregla para root y le PRE-INSTALA las extensiones de VPN y User-Agent por política interna
           docker exec $(docker ps -q) sh -c "
             apt-get update -y || true &&
             apt-get install -y wget gdebi-core &&
             wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb &&
             gdebi --n google-chrome-stable_current_amd64.deb &&
-            sed -i 's/exec -a \"\$0\" \"\$HERE\/chrome\" \"\$@\"/exec -a \"\$0\" \"\$HERE\/chrome\" \"\$@\" --no-sandbox --user-data-dir --disable-gpu/g' /opt/google/chrome/google-chrome
+            sed -i 's/exec -a \"\$0\" \"\$HERE\/chrome\" \"\$@\"/exec -a \"\$0\" \"\$HERE\/chrome\" \"\$@\" --no-sandbox --user-data-dir --disable-gpu/g' /opt/google/chrome/google-chrome &&
+            mkdir -p /etc/opt/chrome/policies/managed &&
+            echo '{\"ExtensionInstallForcelist\": [\"eppiocemhmnbneldhgflamieenbbgcko;https://clients2.google.com/service/update2/crx\", \"djflhoibgkdhocackgohgcaadenmccno;https://clients2.google.com/service/update2/crx\"]}' > /etc/opt/chrome/policies/managed/extensions.json
           "
           
           echo "=========================================================="
-          echo "GOOGLE CHROME LISTO. ACTIVANDO CLOUDFLARE..."
+          echo "SISTEMA LISTO. ACTIVANDO ENLACE CLOUDFLARE..."
           echo "=========================================================="
           
           # 3. Descarga Cloudflare
