@@ -1,4 +1,4 @@
-name: Navegador Libre Pinggy
+name: Navegador Directo Cloudflare
 on:
   workflow_dispatch:
 
@@ -12,8 +12,16 @@ jobs:
           docker run -d -p 6080:80 --security-opt seccomp=unconfined dorowu/ubuntu-desktop-lxde-vnc
           
           echo "=========================================================="
-          echo "GENERANDO ENLACE SEGURO CON PINGGY..."
+          echo "INSTALANDO FILTRO SEGURO CLOUDFLARE..."
           echo "=========================================================="
           
-          # 2. Crea un túnel SSH retransmitiendo el navegador
-          ssh -p 443 -R0:localhost:6080 -o StrictHostKeyChecking=no a.pinggy.io
+          # 2. Descarga el conector oficial de Cloudflare
+          curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o cloudflared
+          chmod +x cloudflared
+          
+          echo "=========================================================="
+          echo "GENERANDO ENLACE DIRECTO SIN ADVERTENCIAS..."
+          echo "=========================================================="
+          
+          # 3. Crea el túnel directo al navegador virtual
+          ./cloudflared tunnel --url http://localhost:6080
