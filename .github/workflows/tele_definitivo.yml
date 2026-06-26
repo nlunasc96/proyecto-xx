@@ -18,6 +18,5 @@ jobs:
           echo "GENERANDO ENLACE INDESTRUCTIBLE..."
           echo "=========================================================="
           
-          # 3. Forzar la carga de la ruta de Microsoft y arrancar el túnel
-          source ~/.bashrc
-          ~/.devtunnel/devtunnel host create --allow-anonymous -p 6080
+          # 3. Arrancar el túnel usando la ruta global directa de instalación
+          /usr/local/bin/devtunnel host create --allow-anonymous -p 6080
