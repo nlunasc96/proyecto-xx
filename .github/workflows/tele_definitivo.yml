@@ -1,0 +1,23 @@
+name: Navegador Definitivo Microsoft
+on:
+  workflow_dispatch:
+
+jobs:
+  run-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Iniciar Entorno Web
+        run: |
+          # 1. Levanta el navegador virtual
+          docker run -d -p 6080:80 --security-opt seccomp=unconfined dorowu/ubuntu-desktop-lxde-vnc
+          
+          # 2. Descarga e instala la herramienta oficial de Microsoft
+          curl -sL https://aka.ms/DevTunnelCliInstall | bash
+          
+          echo "=========================================================="
+          echo "GENERANDO ENLACE INDESTRUCTIBLE..."
+          echo "=========================================================="
+          
+          # 3. Forzar la carga de la ruta de Microsoft y arrancar el túnel
+          source ~/.bashrc
+          ~/.devtunnel/devtunnel host create --allow-anonymous -p 6080
