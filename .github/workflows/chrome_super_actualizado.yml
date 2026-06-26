@@ -1,0 +1,37 @@
+name: Navegador Chrome Pro (WhatsApp & Spotify)
+on:
+  workflow_dispatch:
+
+jobs:
+  run-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Preparar Entorno y Chrome
+        run: |
+          # 1. Levanta el escritorio virtual
+          docker run -d -p 6080:80 --security-opt seccomp=unconfined dorowu/ubuntu-desktop-lxde-vnc
+          
+          echo "=========================================================="
+          echo "INSTALANDO GOOGLE CHROME ACTUALIZADO (ESPERA UN MOMENTO)..."
+          echo "=========================================================="
+          
+          # 2. Entra al contenedor e instala Chrome + lo arregla para abrir como root
+          # Usamos -i para que GitHub espere a que termine la instalación antes de darnos el link
+          docker exec $(docker ps -q) sh -c "
+            apt-get update && 
+            apt-get install -y wget && 
+            wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && 
+            apt-get install -y ./google-chrome-stable_current_amd64.deb &&
+            sed -i 's/exec -a \"\$0\" \"\$HERE\/chrome\" \"\$@\"/exec -a \"\$0\" \"\$HERE\/chrome\" \"\$@\" --no-sandbox --user-data-dir/g' /opt/google/chrome/google-chrome
+          "
+          
+          echo "=========================================================="
+          echo "GOOGLE CHROME LISTO. ACTIVANDO CLOUDFLARE..."
+          echo "=========================================================="
+          
+          # 3. Descarga Cloudflare
+          curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o cloudflared
+          chmod +x cloudflared
+          
+          # 4. Genera el enlace
+          ./cloudflared tunnel --url http://localhost:6080
