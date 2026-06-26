@@ -1,0 +1,22 @@
+name: Navegador Seguro Microsoft
+on:
+  workflow_dispatch:
+
+jobs:
+  run-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Iniciar Entorno Web
+        run: |
+          # Levanta el navegador virtual
+          docker run -d -p 6080:80 --security-opt seccomp=unconfined dorowu/ubuntu-desktop-lxde-vnc
+          
+          # Descarga la herramienta oficial de túneles de Microsoft
+          curl -sL https://aka.ms/DevTunnelCliInstall | bash
+          
+          echo "=========================================================="
+          echo "GENERANDO ENLACE INDESTRUCTIBLE..."
+          echo "=========================================================="
+          
+          # Crea el túnel público bajo dominio seguro de Microsoft
+          ./devtunnel host create --allow-anonymous -p 6080
